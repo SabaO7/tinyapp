@@ -32,8 +32,19 @@ const getUserByEmail = function(email, user) {
   }
 };
 
+const urlsForUser = function(id, urlDatabase) {
+  const userUrls = {};
+  for (const shortURL in urlDatabase) {
+    if (urlDatabase[shortURL].userID === id) {
+      userUrls[shortURL] = urlDatabase[shortURL];
+    }
+  }
+  return userUrls;
+};
+
 module.exports = {
   generateRandomString,
   hasUser,
-  getUserByEmail
+  getUserByEmail, 
+  urlsForUser
 };
