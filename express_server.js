@@ -18,7 +18,7 @@ const urlDatabase = {
   "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userID: "userRandomID" },
   "9sm5xK": { longURL: "http://www.google.com", userID: "user2RandomID" }
 };
-
+const users = {};
 
 app.use(express.urlencoded({ extended: true }));
 
@@ -30,19 +30,6 @@ app.use(
   })
 );
 
-const users = {
-  userRandomID: {
-    id: "userRandomID",
-    email: "user@example.com",
-    password: "purple-monkey-dinosaur"
-  },
-  user2RandomID: {
-    id: "user2RandomID",
-    email: "user2@example.com",
-    password: "dishwasher-funk"
-  }
-};
-
 const urlsForUser = (id) => {
   return Object.keys(urlDatabase).filter(shortURL => urlDatabase[shortURL].userID === id)
     .reduce((result, shortURL) => {
@@ -52,6 +39,14 @@ const urlsForUser = (id) => {
 }
 
 // Homepage
+app.get("/urls", (req, res) => {
+  const templateVars = {
+    user: users[req.session.user_id],
+    urls: urlsForUser(req.session.user_id, urlDatabase),
+  };
+  res.render("urls_index", templateVars);
+});
+
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
