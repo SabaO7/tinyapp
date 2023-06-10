@@ -1,7 +1,8 @@
 const express = require("express");
-const cookieParser = require("cookie-parser");
 const cookieSession = require("cookie-session");
 const bcrypt = require("bcrypt");
+const password = "purple-monkey-dinosaur"; // found in the req.body object
+const hashedPassword = bcrypt.hashSync(password, 10);
 const app = express();
 const PORT = 8080;
 
@@ -20,11 +21,11 @@ const urlDatabase = {
 
 
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+
 app.use(
   cookieSession({
     name: "session",
-    keys: ["Cool"],
+    keys: ["Test"],
     maxAge: 24 * 60 * 60 * 1000 // 24 hours
   })
 );
@@ -64,16 +65,19 @@ app.post("/login", (req, res) => {
   }
 
   // Set the user_id cookie with the matching user's ID
-  req.session.userId = user.id;
+  req.session.user_id = user.id
 
   // Redirect to /urls
   res.redirect("/urls");
 });
 
-
-
 // Creating new urls
 app.get("/urls/new", (req, res) => {
+  // If the user is not logged in, redirect to /login
+  if (!req.session.user_id) {
+    return res.redirect("/login");
+  }
+
   const templateVars = {
     user: users[req.session.user_id]
   };
@@ -146,19 +150,6 @@ app.post("/urls", (req, res) => {
   }
 });
 
-app.post("/urls", (req, res) => {
-  if (hasUser(req.session.user_id, users)) {
-    if (!hasURL(req.body.longURL, urlDatabase, req.session.user_id)) {
-      //checks if the URL has been made for that user
-      let shortURL = generateRandomString();
-      urlDatabase[shortURL] = {
-        longURL: req.body.longURL,
-        userID: req.session.user_id,
-      };
-    }
-  }
-});
-
 // Registration Page
 app.get("/register", (req, res) => {
   // If the user is logged in, redirect to /urls
@@ -191,13 +182,6 @@ app.post("/register", (req, res) => {
     req.session.user_id = id;
     res.redirect("/urls");
   }
-});
-
-app.post("/urls", (req, res) => {
-  const id = generateRandomString();
-  const longURL = req.body.longURL;
-  urlDatabase[id] = longURL;
-  res.redirect(`/urls/${id}`);
 });
 
 app.post("/urls/:id/delete", (req, res) => {

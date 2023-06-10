@@ -24,15 +24,13 @@ const hasUser = function(input, user) {
   return false;
 };
 
-
 const getUserByEmail = function(email, user) {
   for (const profile in user) {
     if (user[profile].email === email) {
-      return profile;
+      return user[profile];
     }
   }
 };
-
 
 module.exports = {
   generateRandomString,
