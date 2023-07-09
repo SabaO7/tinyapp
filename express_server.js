@@ -112,7 +112,7 @@ app.post("/urls/:id/update", (req, res) => {
   }
 
   urlDatabase[shortURL].longURL = newLongURL;
-  res.redirect(`/urls/${shortURL}`);
+  res.redirect(`/urls`);
 });
 
 app.post("/urls/:id/delete", (req, res) => {
