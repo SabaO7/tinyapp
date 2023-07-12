@@ -147,9 +147,12 @@ app.get("/u/:id", (req, res) => {
     // Respond with an HTML error message
     return res.status(404).send("<h1>Error: The short URL does not exist!</h1>");
   }
-
   // Redirect to the long URL
-  res.redirect(url.longURL);
+  let longURL = url.longURL;
+  if (!longURL.includes ('http')) {
+    longURL = 'http://' + url.longURL
+  }
+  res.redirect(longURL);
 });
 
 // Registration Page
