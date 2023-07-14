@@ -1,7 +1,6 @@
 const express = require("express");
 const cookieSession = require("cookie-session");
 const bcrypt = require("bcrypt");
-const hashedPassword = bcrypt.hashSync(password, 10);
 const app = express();
 const PORT = 8080;
 
